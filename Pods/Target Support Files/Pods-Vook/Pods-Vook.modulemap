@@ -1,0 +1,6 @@
+framework module Pods_Vook {
+  umbrella header "Pods-Vook-umbrella.h"
+
+  export *
+  module * { export * }
+}

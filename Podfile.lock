@@ -1,0 +1,15 @@
+PODS:
+  - Alamofire (4.2.0)
+  - Backendless-ios-SDK (3.0.42)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.0)
+  - Backendless-ios-SDK
+
+SPEC CHECKSUMS:
+  Alamofire: aa2e09d871c9160ac53c90e83c68064a94e3dfbe
+  Backendless-ios-SDK: 602cb155a4021b60d6dfa770020d83fdf944f376
+
+PODFILE CHECKSUM: aa5d930618ecccf3d389096d5d82bba58d219072
+
+COCOAPODS: 1.2.0.beta.1
