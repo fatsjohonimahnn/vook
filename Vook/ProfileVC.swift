@@ -15,6 +15,8 @@ class ProfileVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var watchLiveButton: UIButton!
     
+    let blackoutView = UIView()
+    
     var user: BackendlessUser?
     var currentUserProfileSelected = true
     let currentUser = Backendless.sharedInstance().userService.currentUser
@@ -37,12 +39,23 @@ class ProfileVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         self.tabBarController?.tabBar.isHidden = false
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        blackoutView.removeFromSuperview()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // if profile tab selected and user not logged in
         // isUserLoggedIn might take a lot of memory
         if currentUserProfileSelected && BackendlessManager.sharedInstance.isUserLoggedIn() == false {
+            
+            blackoutView.frame = view.frame
+            blackoutView.center = view.center
+            blackoutView.backgroundColor = UIColor.black
+            view.addSubview(blackoutView)
             
             let alertController = UIAlertController(title: "Please log in", message: "You need an account to view your profile. Please log in!", preferredStyle: .alert)
             

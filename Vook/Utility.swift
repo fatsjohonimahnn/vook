@@ -25,6 +25,40 @@ class Utility {
     // For live broadcasting and playback
     var isLive: Bool? = false
     
+    // MARK: Custom Activity Indicator
+    
+    var containerView = UIView()
+    var activityIndicator = UIActivityIndicatorView()
+    
+    func showActivityIndicator(view: UIView) {
+        
+        let activityViewBackground = UIView()
+        
+        containerView.frame = view.frame
+        containerView.center = view.center
+        
+        activityViewBackground.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
+        activityViewBackground.center = view.center
+        activityViewBackground.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5)
+        activityViewBackground.clipsToBounds = true
+        activityViewBackground.layer.cornerRadius = 5.0
+        
+        activityIndicator.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        activityIndicator.activityIndicatorViewStyle = .whiteLarge
+        activityIndicator.center = CGPoint(x: activityViewBackground.frame.size.width / 2, y: activityViewBackground.frame.size.width / 2)
+        
+        activityViewBackground.addSubview(activityIndicator)
+        containerView.addSubview(activityViewBackground)
+        view.addSubview(containerView)
+        activityIndicator.startAnimating()
+    }
+    
+    func hideActivityIndicator(view: UIView) {
+        
+        activityIndicator.stopAnimating()
+        containerView.removeFromSuperview()
+    }
+    
     // check if entered email is in the right format
     static func isValidEmail(emailAddress: String) -> Bool {
         
@@ -105,7 +139,6 @@ class Utility {
     }
     
     func loadUserDataFromArchiver() -> (UserData?) {
-    //func loadUserDataFromArchiver(completion: @escaping (UserData?) -> ()) {
         
         let defaults = Foundation.UserDefaults.standard
         
@@ -113,23 +146,12 @@ class Utility {
             
             let userData = NSKeyedUnarchiver.unarchiveObject(with: data) as? UserData
             
-//            bookImage.image = userData.bookImage!
-//            bookImage.isUserInteractionEnabled = false
-//            
-//            bookTitleTextField.text = userData.bookTitle!
-//            bookTitleTextField.isEnabled = false
-//            
-//            bookAuthorTextField.text = userData.bookAuthor!
-//            bookAuthorTextField.isEnabled = false
-//            
-//            genreTextField.text = userData.bookGenre!
-//            genreTextField.isEnabled = false
-//            
-//            self.bookId = userData.bookObjectId!
             return userData
         }
         return nil  
     }
+    
+   
     
     
     

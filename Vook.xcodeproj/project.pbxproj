@@ -126,7 +126,6 @@
 				7EB80F4D1DAE7A1A0004CB87 /* GoLiveVC.swift */,
 				7E0D5F7E1DA84D1600F0D276 /* ProfileVC.swift */,
 				7ED15D9F1DBB9E830068A132 /* VideoListVC.swift */,
-				7ED15DA11DBBB58B0068A132 /* VideoListCell.swift */,
 				7E13C3311DB3F24800978A34 /* PlaybackVC.swift */,
 				7E3190B61D942DF80074B5D3 /* StartVC.swift */,
 				7E079AF61D9B51410043AC54 /* LoginVC.swift */,
@@ -146,6 +145,7 @@
 				7EE6E2561E2E9B0C000DD769 /* BookTableViewCell.swift */,
 				7E0D5F7C1DA817E800F0D276 /* BroadcasterCell.swift */,
 				7E13C32F1DB3ECF900978A34 /* ProfileCell.swift */,
+				7ED15DA11DBBB58B0068A132 /* VideoListCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";

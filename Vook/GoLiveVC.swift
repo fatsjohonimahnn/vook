@@ -231,7 +231,7 @@ class GoLiveVC: UIViewController, UITextViewDelegate {
         stopButton.isHidden = false
         stopButton.isEnabled = true
         
-        // spinner.startAnimating()
+        Utility.sharedInstance.showActivityIndicator(view: self.view)
     }
     
     
@@ -254,8 +254,7 @@ class GoLiveVC: UIViewController, UITextViewDelegate {
             BackendlessManager.sharedInstance.updateLiveStatus(isLive: false, completion: {}, error: {})
           //  broadcastData?.isLive = false
         }
-        
-  //      Utility.sharedInstance.hideActivityIndicator(uiView: view)
+        Utility.sharedInstance.hideActivityIndicator(view: self.view)
     }
     
     func showDoneAlert(title: String, message: String) {
@@ -336,7 +335,7 @@ extension GoLiveVC: IMediaStreamerDelegate {
                     }
                     //self.stopButton.isHidden = false
                     //self.swapCameraButton.isEnabled = true
-                    //Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                 }
                 
                 if self.player != nil {

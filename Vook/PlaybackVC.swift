@@ -71,7 +71,7 @@ class PlaybackVC: UIViewController, IMediaStreamerDelegate {
         playButton.isEnabled = false
         stopButton.isEnabled = true
         
-        //spinner start
+        Utility.sharedInstance.showActivityIndicator(view: self.view)
         
     }
     
@@ -92,7 +92,7 @@ class PlaybackVC: UIViewController, IMediaStreamerDelegate {
             player = nil;
         }
         
-        //spinner stop
+        Utility.sharedInstance.hideActivityIndicator(view: self.view)
     }
     
     // MARK: IMediaStreamerDelegate protocol methods to handle stream state changes and errors
@@ -113,7 +113,7 @@ class PlaybackVC: UIViewController, IMediaStreamerDelegate {
             
         case 3: //STREAM_PLAYING
             
-            //spinner.stopAnimating()
+            Utility.sharedInstance.hideActivityIndicator(view: self.view)
             
             if self.player != nil {
                 
@@ -139,7 +139,7 @@ class PlaybackVC: UIViewController, IMediaStreamerDelegate {
                 
                 playBackView.isHidden = false
                 
-                //spinner.stopAnimating()
+                Utility.sharedInstance.hideActivityIndicator(view: self.view)
             }
             
             return

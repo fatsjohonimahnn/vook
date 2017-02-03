@@ -12,7 +12,6 @@ class LoginVC: UIViewController {
     
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var loginBtn: UIButton!
 
     override func viewDidLoad() {
@@ -44,7 +43,7 @@ class LoginVC: UIViewController {
             return
         }
         
-        spinner.startAnimating()
+        Utility.sharedInstance.showActivityIndicator(view: self.view)
         
         let email = emailTextField.text!
         let password = passwordTextField.text!
@@ -52,14 +51,14 @@ class LoginVC: UIViewController {
         BackendlessManager.sharedInstance.loginUser(email: email, password: password,
             completion: {
                                                         
-                self.spinner.stopAnimating()
-            
+                Utility.sharedInstance.hideActivityIndicator(view: self.view)
+
                 self.performSegue(withIdentifier: "loginToMain", sender: sender)
             },
                                                     
             error: { message in
                                                         
-                self.spinner.stopAnimating()
+                Utility.sharedInstance.hideActivityIndicator(view: self.view)
                                                         
                 Utility.showAlert(viewController: self, title: "Login Error", message: message)
         })

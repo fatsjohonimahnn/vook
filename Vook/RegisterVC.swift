@@ -13,11 +13,8 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var passwordConfirmTextField: UITextField!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var registerBtn: UIButton!
     @IBOutlet weak var warningLabel: UILabel!
-    
-  //  let backendless = Backendless.sharedInstance()!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,8 +35,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         
             warningLabel.isHidden = true
             registerBtn.isEnabled = true
-            
-        } 
+        }
     }
     
     // MARK: UITextFieldDelegate
@@ -47,7 +43,6 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
     // UITextFieldDelegate, called when Return tapped on keyboard
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // Hide the keyboard.
-        
         if textField == emailTextField {
             
             passwordTextField.becomeFirstResponder()
@@ -62,13 +57,10 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                 
                 registerBtn.isEnabled = false
                 warningLabel.isHidden = false
-                
             }
         }
-        
         return true
     }
-    
     
     @IBAction func register(_ sender: UIButton) {
         
@@ -84,7 +76,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
             return
         }
         
-        spinner.startAnimating()
+        Utility.sharedInstance.showActivityIndicator(view: self.view)
         
         let email = emailTextField.text!
         let password = passwordTextField.text!
@@ -96,22 +88,22 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                 BackendlessManager.sharedInstance.loginUser(email: email, password: password,
                     completion: {
                                                                         
-                        self.spinner.stopAnimating()
+                        Utility.sharedInstance.hideActivityIndicator(view: self.view)
                                                                         
                         self.performSegue(withIdentifier: "registerToEditProfile", sender: sender)
                     },
                                                                     
                     error: { message in
                                                                         
-                        self.spinner.stopAnimating()
-                                                                        
+                        Utility.sharedInstance.hideActivityIndicator(view: self.view)
+                        
                         Utility.showAlert(viewController: self, title: "Login Error", message: message)
                     })
             },
                                                        
             error: { message in
                                                         
-                self.spinner.stopAnimating()
+                Utility.sharedInstance.hideActivityIndicator(view: self.view)
                                                         
                 Utility.showAlert(viewController: self, title: "Register Error", message: message)
             })
@@ -119,7 +111,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
     
     @IBAction func cancel(_ sender: UIButton) {
         
-        spinner.stopAnimating()
+        Utility.sharedInstance.hideActivityIndicator(view: self.view)
         
         performSegue(withIdentifier: "registerToStart", sender: sender)
     }

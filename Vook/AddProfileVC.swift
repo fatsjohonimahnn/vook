@@ -13,7 +13,6 @@ class AddProfileVC: UIViewController, UITextFieldDelegate, UITextViewDelegate, U
     @IBOutlet weak var photoSpinner: UIActivityIndicatorView!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var warningLbl: UILabel!
-
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var nameSpinner: UIActivityIndicatorView!
     @IBOutlet weak var saveBtn: UIBarButtonItem!

@@ -21,9 +21,10 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
     @IBOutlet weak var myBooksButton: UIButton!
     @IBOutlet weak var browseBooksButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
-    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
+    
+    let blackoutView = UIView()
     
     // For UserDefaults
     var bookId: String?
@@ -66,10 +67,21 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         activeField?.resignFirstResponder()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        blackoutView.removeFromSuperview()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if BackendlessManager.sharedInstance.isUserLoggedIn() == false {
+            
+            blackoutView.frame = view.frame
+            blackoutView.center = view.center
+            blackoutView.backgroundColor = UIColor.black
+            view.addSubview(blackoutView)
             
             let alertController = UIAlertController(title: "Please log in",
                                                     message: "Going live is for members only. Please log in or sign up!",
@@ -94,7 +106,6 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         else {
             
             if let userData = Utility.sharedInstance.loadUserDataFromArchiver() {
-                //Utility.sharedInstance.loadUserDataFromArchiver(completion: { userData in
                 
                 self.bookImage.image = userData.bookImage!
                 self.bookImage.isUserInteractionEnabled = false
@@ -107,12 +118,7 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
                 self.genreTextField.isEnabled = false
 
                 self.bookId = userData.bookObjectId!
-                //loadUserDataFromArchiver()
-                //print(bookId)
-            
-            
             }
-
 
             if bookTitleTextField.isEnabled {
                 clearButton.isEnabled = false
@@ -138,11 +144,6 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         // Remove observers if this view controller is being destroyed.
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func changeInInputs(textField: UITextField) {
@@ -223,7 +224,6 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         genreTextField.isEnabled = true
         
         clearButton.isEnabled = false
-        
     }
     
     @IBAction func onIsDiscussionSegment(_ sender: UISegmentedControl) {
@@ -281,7 +281,7 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         
         if incomingBookData != nil {
             
-            print("Book: \(incomingBookData?.objectId!), bookTitle: \(incomingBookData?.bookTitle!), bookAuthor: \(incomingBookData?.bookAuthor!), bookGenre: \(incomingBookData?.bookGenre!), bookImageUrl: \(incomingBookData?.bookImageUrl)")
+            //print("Book: \(incomingBookData?.objectId!), bookTitle: \(incomingBookData?.bookTitle!), bookAuthor: \(incomingBookData?.bookAuthor!), bookGenre: \(incomingBookData?.bookGenre!), bookImageUrl: \(incomingBookData?.bookImageUrl)")
             
             clearButton.isEnabled = true
             
@@ -306,7 +306,7 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
                 
                 clearButton.isEnabled = false
                 
-//                Utility.sharedInstance.showActivityIndicator(uiView: self.view)
+                Utility.sharedInstance.showActivityIndicator(view: self.view)
                 
                 Utility.sharedInstance.loadImageFromUrl(photoUrl:(incomingBookData?.bookImageUrl!)!,
                     
@@ -315,20 +315,16 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
                         if let bookImage = UIImage(data: data) {
                         
                             self.bookImage.image = bookImage
-
-                            // set new image to be cached
-                            // since w went to the trouble of pulling down the image data and
-                            // building a UIImage, lets cache the UIImage using the URL as the key
                         
                             Utility.sharedInstance.imageCache.setObject(bookImage, forKey: bookImageUrl as NSString)
                             
-//                            Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                            Utility.sharedInstance.hideActivityIndicator(view: self.view)
                         }
                     },
                 
                     loadError: {
                         
-//                       Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                        Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     
                         Utility.showAlert(viewController: self, title: "Load Error", message: "Could not load book data, please check your internet connection and try again.")
                 })
@@ -340,16 +336,14 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         
         saveButton.isEnabled = false
 
-//       Utility.sharedInstance.showActivityIndicator(uiView: self.view)
+        Utility.sharedInstance.showActivityIndicator(view: self.view)
         
         book.bookTitle = bookTitleTextField.text!
         book.bookAuthor = bookAuthorTextField.text!
         book.bookGenre = genre
         
-        let imageData = UIImageJPEGRepresentation(bookImage.image!, 0.6)
-        let compressedJPGImage = UIImage(data: imageData!)
-        //Saves Photo to camera roll
-        //UIImageWriteToSavedPhotosAlbum(compressedJPGImage!, nil, nil, nil)
+//        let imageData = UIImageJPEGRepresentation(bookImage.image!, 0.6)
+//        let compressedJPGImage = UIImage(data: imageData!)
         
         broadcast.broadcastName = broadcastNameTextField.text!
         // save broadcastUrl
@@ -361,17 +355,15 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         
         if bookTitleTextField.isEnabled == true {
         
-            BackendlessManager.sharedInstance.saveBookAndBroadcastData(bookData: book, bookImage: compressedJPGImage!, broadcastData: broadcast,
+            BackendlessManager.sharedInstance.saveBookAndBroadcastData(bookData: book, bookImage: bookImage.image!, broadcastData: broadcast,
                                                                         
                 completion: { book in
                     
                     print(book.objectId!)
                     
-                    Utility.sharedInstance.writeUserDataToArchiver(bookObjectId: book.objectId!, bookData: book, bookImage: compressedJPGImage!)
+                    Utility.sharedInstance.writeUserDataToArchiver(bookObjectId: book.objectId!, bookData: book, bookImage: self.bookImage.image!)
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     
-                    //self.writeUserDataToArchiver(bookObjectId: book.objectId!)
-                            
-//                    Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
                     self.performSegue(withIdentifier: "videoInfoToGoLive", sender: sender)
                     
                     self.saveButton.isEnabled = true 
@@ -379,7 +371,7 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
                 
                 error: {
                 
-//                    Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     Utility.showAlert(viewController: self, title: "Input Error", message: "Broadcast data failed to save. Please check your internet connection and try again.")
             })
         }
@@ -390,14 +382,13 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
                 completion: {
                     
                     self.myBooksPressed = false
-                    
-//                   Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     self.performSegue(withIdentifier: "videoInfoToGoLive", sender: sender)
                 },
                 
                 error: {
                     
-//                    Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     Utility.showAlert(viewController: self, title: "Input Error", message: "Broadcast data failed to save. Please check your internet connection and try again.")
             })
         }
@@ -409,14 +400,13 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
                                         
                     self.myBooksPressed = false
                     
-//                    Utility.sharedInstance.hideActivityIndicator()
-                    
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     self.performSegue(withIdentifier: "videoInfoToGoLive", sender: sender)
                 },
                 
                 error: {
                     
-//                    Utility.sharedInstance.hideActivityIndicator(uiView: self.view)
+                    Utility.sharedInstance.hideActivityIndicator(view: self.view)
                     Utility.showAlert(viewController: self, title: "Input Error", message: "Broadcast data failed to save. Please check your internet connection and try again.")
             })
         }
@@ -458,7 +448,6 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         
         if bookTitleTextField.isEnabled == false {
             textField.resignFirstResponder()
-//            saveButton.
         }
         
          else if textField == broadcastNameTextField {
@@ -479,9 +468,8 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
     
     // UITextFieldDelegate, called when editing session begins, or when keyboard displayed
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        // Disable Save button while editing.
         
-//        saveButton.isEnabled = false
+        saveButton.isEnabled = false
         self.activeField = textField
         
         if textField == genreTextField {
@@ -496,6 +484,7 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         self.activeField = nil
+        saveButton.isEnabled = true
     }
     
     func keyboardDidShow(_ notification: Notification) {
@@ -566,49 +555,7 @@ class VideoInfoVC: UIViewController, UITextFieldDelegate, UIImagePickerControlle
         genre = pickerGenres[row]
         
         saveButton.isHidden = false
-
     }
-    
-//    // MARK: NSCoding
-//    
-//    func writeUserDataToArchiver(bookObjectId: String) {
-//        
-//        let defaults = Foundation.UserDefaults.standard
-//        
-////        print(bookObjectId)
-//        
-//        let userData = UserData(bookImage: bookImage.image!, bookTitle: bookTitleTextField.text!, bookAuthor: bookAuthorTextField.text!, bookGenre: genreTextField.text!, bookObjectId: bookObjectId)
-//        
-//        let data = NSKeyedArchiver.archivedData(withRootObject: userData)
-//        defaults.set(data, forKey: "USERDATA")
-//        
-//        defaults.synchronize()
-//    }
-//    
-//    func loadUserDataFromArchiver() {
-//        
-//        let defaults = Foundation.UserDefaults.standard
-//        
-//        if let data = defaults.object(forKey: "USERDATA") as? Data {
-//            
-//            let userData = NSKeyedUnarchiver.unarchiveObject(with: data) as! UserData
-//            
-//            bookImage.image = userData.bookImage!
-//            bookImage.isUserInteractionEnabled = false
-//            
-//            bookTitleTextField.text = userData.bookTitle!
-//            bookTitleTextField.isEnabled = false
-//            
-//            bookAuthorTextField.text = userData.bookAuthor!
-//            bookAuthorTextField.isEnabled = false
-//            
-//            genreTextField.text = userData.bookGenre!
-//            genreTextField.isEnabled = false
-//            
-//            self.bookId = userData.bookObjectId!
-//        }
-//    }
-
 }
 
 
