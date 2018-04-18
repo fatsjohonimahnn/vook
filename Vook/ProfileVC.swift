@@ -48,6 +48,8 @@ class ProfileVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.tableView.register(ProfileCell.classForCoder(), forCellReuseIdentifier: "profileCell")
+       // self.tableView.register(ProfileCell.classForCoder(), forCellReuseIdentifier: "profileCell")
         // if profile tab selected and user not logged in
         // isUserLoggedIn might take a lot of memory
         if currentUserProfileSelected && BackendlessManager.sharedInstance.isUserLoggedIn() == false {
@@ -171,15 +173,34 @@ class ProfileVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         let book = books[(indexPath as NSIndexPath).row]
         
-        cell.bookTitleLabel.text = book.bookTitle
-        cell.bookAuthorLabel.text = book.bookAuthor
-        cell.bookGenreLabel.text = book.bookGenre
+        guard let bookTitle = book.bookTitle else {
+            return cell
+        }
+        
+        
+        guard let cellTitleLabel = cell.bookTitleLabel else {
+            return cell
+        }
+
+        guard let cellAuthorLabel = cell.bookAuthorLabel else {
+            return cell
+        }
+        guard let cellGenreLabel = cell.bookGenreLabel else {
+            return cell
+        }
+        guard let cellImage = cell.cellImage else {
+            return cell
+        }
+
+        cellTitleLabel.text = bookTitle
+        cellAuthorLabel.text = book.bookAuthor
+        cellGenreLabel.text = book.bookGenre
         
         let bookImageUrl = book.bookImageUrl! as String
         
         if Utility.sharedInstance.imageCache.object(forKey: bookImageUrl as NSString) != nil {
             
-            cell.cellImage.image = Utility.sharedInstance.imageCache.object(forKey: bookImageUrl as NSString)
+            cellImage.image = Utility.sharedInstance.imageCache.object(forKey: bookImageUrl as NSString)
         } else {
         
             Utility.sharedInstance.loadImageFromUrl(photoUrl: book.bookImageUrl!,
@@ -188,7 +209,7 @@ class ProfileVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     
                     if let bookImage = UIImage(data: data) {
                         
-                        cell.cellImage.image = bookImage
+                        cellImage.image = bookImage
                         
                         Utility.sharedInstance.imageCache.setObject(bookImage, forKey: bookImageUrl as NSString)
                     }
